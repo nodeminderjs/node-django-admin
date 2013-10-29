@@ -1,0 +1,94 @@
+/**
+ * admin.js
+ */
+
+var path = require('path'),
+           mongoose = require('mongoose');
+
+var menu  = ['users'];
+var model = ['user' ];
+
+var info = {
+  'user': {
+    model: 'User',
+    list: {
+      fields:  [ 'name', 'email', 'username', 'cliente' ],
+      headers: [ 'Nome', 'Email', 'Usuário',  'Cliente' ]
+    },
+    id: 'email'
+  }
+}
+
+var base_url;
+
+exports.config = function(app, base) {
+  base_url = base.replace(/\/$/, "");  // remove trailing slash
+
+  app.get(path.join(base, '/'), index);
+
+  /*
+  List   - /admin/users
+  Create - /admin/user/new
+  Read   - /admin/user/<user_id>
+  Update - /admin/user/<user_id>/update
+  Delete - /admin/user/<user_id>/delete
+  */
+
+  app.get(path.join(base, '/:list'), list);
+  app.get(path.join(base, '/:model/:id'), read);
+}
+
+function index(req, res) {
+  res.render('admin/index', { title: 'Admin', base: base_url });
+}
+
+function list(req, res) {
+  var lst = req.params.list;
+  var i = menu.indexOf(lst);
+  if (i == -1) {
+    return res.render('404');
+  }
+
+  try {
+    var m = model[i];
+    var mm = info[m].model;
+    var Model = mongoose.model(mm);
+  }
+  catch(err) {
+    return res.render('404');
+  }
+
+  var page = (req.param('page') > 0 ? req.param('page') : 1) - 1;
+  var perPage = 30;
+  var options = {
+    perPage: perPage,
+    page: page
+  };
+
+  Model.list(options, function(err, result) {
+    if (err) return res.render('500');
+    Model.count().exec(function(err, count) {
+      res.render('admin/list', {
+        title: capitalizeFirstLetter(lst),
+        base: base_url,
+        list: { fields: info[m].list.fields, headers: info[m].list.headers, data: result, id: info[m].id, model: m },
+        page: page + 1,
+        pages: Math.ceil(count / perPage)
+      });
+    });
+  });  
+}
+
+function read(req, res) {
+  res.end('show: ' + req.params.model + ' / ' + req.params.id );
+}
+
+/**
+ * Helper functions
+ */
+
+function capitalizeFirstLetter(string)
+{
+  return string.charAt(0).toUpperCase() + string.slice(1);
+}
+

@@ -1,0 +1,27 @@
+doctype 5
+html
+  head
+    title= title || 'Admin'
+    block stylesheets
+      link(rel='stylesheet', href='/admin/css/admin.css')
+    block javascripts
+
+  body
+    #top
+      .wrap
+        a(href="#{base}")
+          #title
+            h1 Admin Site
+
+
+    #content
+      .wrap
+        #left
+          block left
+            #menu
+              block menu
+
+        #right
+          block content
+
+

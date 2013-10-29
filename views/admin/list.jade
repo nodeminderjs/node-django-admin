@@ -1,0 +1,27 @@
+extends layout
+
+block menu
+  ul
+    li
+      a(href="/admin/users") Users
+
+block content
+  #list
+    h1= title
+    #new
+      a(href="#{base}/#{list.model}/new") new
+
+    table
+      thead
+        tr
+          - each header in list.headers
+            th= header
+          th
+      tbody
+        -each d in list.data
+          tr
+            - each f in list.fields
+              td= d[f]
+            td
+              a(href="#{base}/#{list.model}/#{d[list.id]}") editar
+
