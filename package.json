@@ -20,7 +20,7 @@
   },
   "repository" : {
     "type": "git",
-    "url": "https://github.com/nodeminderjs/node-django-admin.git"  
+    "url": "https://github.com/nodeminderjs/node-django-admin"  
   },
   "scripts": {
     "test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/test-*.js"

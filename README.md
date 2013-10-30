@@ -7,7 +7,6 @@ It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.co
 
 Theres is a demo app in the *demo* dir. There are example config files, views and stylesheets you can use in your own project.
 
-
 Install
 -------
 
@@ -21,7 +20,6 @@ You can copy the example files to your app and modify then:
 Copy the folder *demo/views/admin* to *your_app_views_dir/admin*.
 
 Copy the folder *demo/public/admin* to *your_public_dir/admin*.
-
 
 How to use
 ----------
