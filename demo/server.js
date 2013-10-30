@@ -9,7 +9,7 @@ var express = require('express'),
     pkg = require('./package.json'),
     env = process.env.NODE_ENV || 'development';
 
-var admin = require('../admin');
+var admin = require('node-django-admin');
 
 // Bootstrap db connection
 mongoose.connect('mongodb://localhost/node-django-admin');

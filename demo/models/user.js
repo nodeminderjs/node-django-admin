@@ -5,7 +5,8 @@
 
 var mongoose = require('mongoose'),
     Schema = mongoose.Schema,
-    crypto = require('crypto');
+    crypto = require('crypto'),
+    admin = require('node-django-admin');
 
 /**
  * User Schema
@@ -159,5 +160,24 @@ UserSchema.statics = {
 
 }
 
+/**
+ * Register the model in mongoose
+ */
+
 mongoose.model('User', UserSchema);
+
+/**
+ * Register the model in the admin interface
+ */
+
+admin.add({
+  singular: 'user',
+  plural: 'users',
+  model: 'User',
+  list: {
+    fields:  [ 'name', 'email'  ],
+    headers: [ 'Name', 'E-mail' ]
+  },
+  id: 'email'
+});
 

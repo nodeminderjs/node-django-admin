@@ -1,25 +1,20 @@
 /**
  * admin.js
  */
-
 var path = require('path');
 
-var menu  = ['users'];
-var model = ['user' ];
-
-var info = {
-  'user': {
-    model: 'User',
-    list: {
-      fields:  [ 'name', 'email', 'username', 'cliente' ],
-      headers: [ 'Nome', 'Email', 'Usuário',  'Cliente' ]
-    },
-    id: 'email'
-  }
-}
+var menu  = [],
+    model = [],
+    info  = {};
 
 var mongoose,
     base_url;
+
+exports.add = function(model_info) {
+  menu.push(model_info.plural);
+  model.push(model_info.singular);
+  info[model_info.singular] = model_info;
+}
 
 exports.config = function(app, mongoose_app, base) {
   mongoose = mongoose_app;
