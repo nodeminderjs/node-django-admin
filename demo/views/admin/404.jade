@@ -1,0 +1,12 @@
+extends layouts/default
+
+block content
+  h1 Oops something went wrong
+  br
+  h2 404
+
+  #error-message-box
+    #error-stack-trace
+      pre
+        code!= error
+

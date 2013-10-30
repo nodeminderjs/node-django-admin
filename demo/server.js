@@ -6,9 +6,10 @@
 var express = require('express'),
     mongoose = require('mongoose'),
     fs = require('fs'),
+    pkg = require('./package.json'),
     env = process.env.NODE_ENV || 'development';
 
-var admin = require('./admin');
+var admin = require('../admin');
 
 // Bootstrap db connection
 mongoose.connect('mongodb://localhost/node-django-admin');
@@ -23,13 +24,17 @@ fs.readdirSync(models_path).forEach(function(file) {
 // Express settings
 var app = express();
 app.set('port', process.env.PORT || 3000);
+app.set('views', __dirname + '/views');
+app.set('view engine', 'jade');
 app.use(express.favicon());
 app.use(express.static(__dirname + '/public'));
 if (env !== 'test') {
   app.use(express.logger('dev'));
 }
-app.set('views', __dirname + '/views');
-app.set('view engine', 'jade');
+app.use(function(req, res, next) {  // expose package.json to views
+  res.locals.pkg = pkg;
+  next();
+});
 app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
@@ -39,7 +44,7 @@ app.use(app.router);
 // Bootstrap routes
 
 // Bootstrap admin site
-admin.config(app, '/admin');
+admin.config(app, mongoose, '/admin');
 
 // Run server
 var server = require('http').createServer(app);

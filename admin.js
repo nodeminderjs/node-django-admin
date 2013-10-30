@@ -2,8 +2,7 @@
  * admin.js
  */
 
-var path = require('path'),
-           mongoose = require('mongoose');
+var path = require('path');
 
 var menu  = ['users'];
 var model = ['user' ];
@@ -19,20 +18,22 @@ var info = {
   }
 }
 
-var base_url;
+var mongoose,
+    base_url;
 
-exports.config = function(app, base) {
-  base_url = base.replace(/\/$/, "");  // remove trailing slash
+exports.config = function(app, mongoose_app, base) {
+  mongoose = mongoose_app;
+  base_url = base.replace(/\/$/, "");  // remove trailing slash from base url
 
   app.get(path.join(base, '/'), index);
 
-  /*
-  List   - /admin/users
-  Create - /admin/user/new
-  Read   - /admin/user/<user_id>
-  Update - /admin/user/<user_id>/update
-  Delete - /admin/user/<user_id>/delete
-  */
+  /**
+   * List   - /admin/users
+   * Create - /admin/user/new
+   * Read   - /admin/user/<user_id>
+   * Update - /admin/user/<user_id>/update
+   * Delete - /admin/user/<user_id>/delete
+   */
 
   app.get(path.join(base, '/:list'), list);
   app.get(path.join(base, '/:model/:id'), read);
@@ -46,7 +47,7 @@ function list(req, res) {
   var lst = req.params.list;
   var i = menu.indexOf(lst);
   if (i == -1) {
-    return res.render('404');
+    return res.render('admin/404');
   }
 
   try {
@@ -55,7 +56,7 @@ function list(req, res) {
     var Model = mongoose.model(mm);
   }
   catch(err) {
-    return res.render('404');
+    return res.render('admin/404');
   }
 
   var page = (req.param('page') > 0 ? req.param('page') : 1) - 1;
@@ -66,7 +67,7 @@ function list(req, res) {
   };
 
   Model.list(options, function(err, result) {
-    if (err) return res.render('500');
+    if (err) return res.render('admin/500');
     Model.count().exec(function(err, count) {
       res.render('admin/list', {
         title: capitalizeFirstLetter(lst),
