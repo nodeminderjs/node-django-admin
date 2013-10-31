@@ -29,6 +29,10 @@ Initialize the admin interface after initializing express:
     // Bootstrap admin site
     admin.config(app, mongoose, '/admin');
 
+This must be called before configure express router:
+
+    app.use(app.router);
+
 Register the mongoose models in the admin interface:
 
 Example:

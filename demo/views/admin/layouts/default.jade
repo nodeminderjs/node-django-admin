@@ -15,6 +15,10 @@ html
           block left
             #menu
               block menu
+                ul
+                  - each item in menu
+                    li
+                      a(href="#{base}/#{item}")= capitalizeFirstLetter(item)
 
         #right
           block content
