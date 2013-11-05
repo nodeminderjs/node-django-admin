@@ -55,10 +55,10 @@ table {
 #new a {
   color: #fff;
   background-color: #999;
-  padding: 2px 16px;
-  -webkit-border-radius: 8px;
-  -moz-border-radius: 8px;
-  border-radius: 8px;
+  padding: 1px 16px;
+  -webkit-border-radius: 5px;
+  -moz-border-radius: 5px;
+  border-radius: 5px;
 }
 
 table {

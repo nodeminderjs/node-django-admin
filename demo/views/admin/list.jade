@@ -4,19 +4,19 @@ block content
   #list
     h1= title
     #new
-      a(href="#{base}/#{list.model}/new") new
+      a(href="#{base}/#{model}/new") New
 
     table
       thead
         tr
-          - each header in list.headers
-            th= header
+          - each f in list
+            th= field[f].header || capitalizeFirstLetter(f)
           th
       tbody
-        -each d in list.data
+        -each d in data
           tr
-            - each f in list.fields
+            - each f in list
               td= d[f]
             td
-              a(href="#{base}/#{list.model}/#{d[list.id]}") editar
+              a(href="#{base}/#{model}/#{d._id}/edit") editar
 

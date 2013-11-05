@@ -7,6 +7,13 @@ It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.co
 
 Theres is a demo app in the *demo* dir. There are example config files, views and stylesheets you can use in your own project.
 
+Disclaimer
+----------
+
+We are in an early development stage, so the project is not fully functional. 
+
+There is absolutely no concern about backward compatibility until version 0.1.x is reached.
+
 Install
 -------
 
@@ -45,11 +52,20 @@ Example:
       singular: 'user',
       plural: 'users',
       model: 'User',
-      list: {
-        fields:  [ 'name', 'email'  ],
-        headers: [ 'Name', 'E-mail' ]
-      },
-      id: 'email'
+      list: [ 'name', 'email', 'client' ],
+      edit: [ 'name', 'email', 'client' ],
+      field: {
+        'name': {
+          header: 'Name'
+        },
+        'email': {
+          header: 'Email',
+          widget: 'email'
+        },
+        'client': {
+          header: 'Client'
+        }
+      }
     });
 
 Links
