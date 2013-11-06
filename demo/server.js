@@ -39,12 +39,12 @@ app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.session({ secret: 'SECRET' }));
-app.use(app.router);
-
-// Bootstrap routes
 
 // Bootstrap admin site
 admin.config(app, mongoose, '/admin');
+
+//Bootstrap routes
+app.use(app.router);
 
 // Run server
 var server = require('http').createServer(app);

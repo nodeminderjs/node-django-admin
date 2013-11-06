@@ -68,6 +68,12 @@ Example:
       }
     });
 
+### widget
+
+* text (default)
+* email
+* select
+
 Links
 -----
 

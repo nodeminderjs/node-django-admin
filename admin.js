@@ -3,17 +3,16 @@
  */
 var path = require('path');
 
-var plural = [],
-    singular = [],
+var paths = [],
     info  = {};
 
 var mongoose,
-    base_url;
+    base_url,
+    path_url;
 
 exports.add = function(model_info) {
-  plural.push(model_info.plural);
-  singular.push(model_info.singular);
-  info[model_info.singular] = model_info;
+  paths.push(model_info.path);
+  info[model_info.path] = model_info;
 };
 
 exports.config = function(app, mongoose_app, base) {
@@ -23,43 +22,32 @@ exports.config = function(app, mongoose_app, base) {
   // middleware to expose some helper functions and vars to templates
   app.use('/admin', function(req, res, next) {
     res.locals.capitalizeFirstLetter = capitalizeFirstLetter;
-    res.locals.getFieldWidget = getFieldWidget;
-    res.locals.base = base_url,
-    res.locals.menu = plural;
+    res.locals.base = base_url;
+    res.locals.menu = paths;
+    console.log(res.locals.menu);
     next();
   });
 
   // routes
   app.get(path.join(base, '/'), index);
 
-  app.get(path.join(base, '/:singular/:id/edit'), edit);
-  app.get(path.join(base, '/:singular/new'), edit);
-  app.get(path.join(base, '/:plural'), list);
+  app.get(path.join(base, '/:path/:id/edit'), edit);
+  app.get(path.join(base, '/:path/new'), edit);
+  app.get(path.join(base, '/:path'), list);
   
-  app.post(path.join(base, '/:singular/:id'), save);
-  app.post(path.join(base, '/:singular'), save);
+  app.post(path.join(base, '/:path/:id'), save);
+  app.post(path.join(base, '/:path'), save);
   
 };
 
 function index(req, res) {
-  res.render('admin/index', { title: 'Admin', base: base_url, menu: plural });
+  res.render('admin/index', { title: 'Admin' });
 }
 
 function list(req, res) {
-  var lst = req.params.plural;
-  var i = plural.indexOf(lst);
-  if (i == -1) {
-    return res.render('admin/404');
-  }
-
-  try {
-    var m = singular[i];
-    var mm = info[m].model;
-    var Model = mongoose.model(mm);
-  }
-  catch(err) {
-    return res.render('admin/404');
-  }
+  var p = req.params.path,
+      m = info[p].model,
+      Model = mongoose.model(m);
 
   var page = (req.param('page') > 0 ? req.param('page') : 1) - 1;
   var perPage = 30;
@@ -71,14 +59,13 @@ function list(req, res) {
   Model.list(options, function(err, result) {
     if (err) return res.render('admin/500');
     Model.count().exec(function(err, count) {
-      //console.log(info[m].list);
       res.render('admin/list', {
-        title: capitalizeFirstLetter(lst),
-        list: info[m].list,
-        field: info[m].field,
-        data: result,
-        model: m,
-        page: page + 1,
+        title: capitalizeFirstLetter(p),
+        list:  info[p].list,
+        field: info[p].fields,
+        data:  result,
+        path:  p,
+        page:  page + 1,
         pages: Math.ceil(count / perPage)
       });
     });
@@ -86,47 +73,45 @@ function list(req, res) {
 }
 
 function edit(req, res) {
-  var s = req.params.singular,
-      p = plural[singular.indexOf(s)],
+  var p = req.params.path,
       id = req.params.id,
-      meta = info[s];
+      meta = info[p];
       Model = mongoose.model(meta.model);
-
+      
   Model.load(id, function(err, doc) {
     if (err) return res.render('admin/500');
     if (!doc) {
       doc = new Model();
     }
-    res.render('admin/form', {
-      doc: doc,
-      singular: s,
-      plural: p,
-      edit: meta.edit,
-      field: meta.field
+    processEditFields(meta.edit, meta.fields, function() {
+      res.render('admin/form', {
+        doc:   doc,
+        path:  p,
+        edit:  meta.edit,
+        field: meta.fields
+      });
     });
   });
 }
 
 function save(req, res) {
   var id = req.params.id,
-      s = req.params.singular,
-      p = plural[singular.indexOf(s)],
-      Model = mongoose.model(info[s].model),
+      p = req.params.path,
+      Model = mongoose.model(info[p].model),
       doc;
 
   if (id) {
     Model.findOne({_id: id}, function(err, doc) {
       if (err) console.log(err);
-      updateFromObject(doc, req.body[s]);
+      updateFromObject(doc, req.body[p]);
       doc.save(function(err) {
         if (err) console.log(err);
         return res.redirect(base_url + '/' + p);
       });
     });
-    //return res.end(id);
   } else {
-    var doc = new Model(req.body[s]);
-    doc.password = '123mudar';
+    var doc = new Model(req.body[p]);
+    doc.password = '123change';
     doc.save(function(err) {
       if (err) console.log(err);
       return res.redirect(base_url + '/' + p);
@@ -143,18 +128,48 @@ function capitalizeFirstLetter(string)
   return string.charAt(0).toUpperCase() + string.slice(1);
 }
 
-function getFieldWidget(model, field) {
-  var widget = info[model].field[field]['widget'] || 'text';
-  switch (widget) {
-  case 'text':
-    return '<input type="text"></input>';
-  case 'email':
-    return '<input type="email"></input>';
-  }
-}
-
 function updateFromObject(doc, obj) {
   for (var field in obj) {
     doc[field] = obj[field];  
+  }
+}
+
+function getType(obj) {
+  return ({}).toString.call(obj).match(/\s([a-zA-Z]+)/)[1].toLowerCase();
+}
+
+function processEditFields(edit, fields, cb) {
+  var f,
+      Model,
+      query,
+      field,
+      select,
+      count = 0;
+  
+  for (f in edit)
+    if (fields[edit[f]].query)
+      count++;
+  
+  if (!count) {
+    cb();
+    return;
+  }
+
+  for (f in edit) {
+    field = fields[edit[f]]; 
+    if (field.query) {
+      query = field.query;
+      // query: { model: 'Client', where: {}, select: 'name' }
+      select = query.select;
+      Model = mongoose.model(query.model);
+      Model.find(query.filter, select, {sort: select}, function(err, results) {
+        if (err) console.log(err);
+        field['values'] = results.map(function(e) { return e[select]; });
+        count--;
+        if (count == 0) {
+          cb();
+        }
+      });      
+    }
   }
 }

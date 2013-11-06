@@ -1,7 +1,7 @@
 extends layouts/default
 
 block content
-  - var action = base + '/' + singular
+  - var action = base + '/' + path
   - action += doc.isNew ? '' : '/' + doc._id
   - var id = doc.isNew ? '' : doc._id
 
@@ -18,9 +18,17 @@ block content
             td
               label(for=f)= header
             td
-              input(id=f, type=type, name=singular+'['+f+']', value=doc[f], placeholder='Enter '+header)
+              if type == 'select'
+                select(id=f, name=path+'['+f+']', placeholder='Enter '+header)
+                  each v in field[f].values
+                    if v == doc[f]
+                      option(value=v, selected)= v
+                    else
+                      option(value=v)= v
+              else
+                input(id=f, type=type, name=path+'['+f+']', value=doc[f], placeholder='Enter '+header)
       
 
     button(type='submit') Save changes
     &nbsp;
-    a.btn(href='#{base}/#{plural}', title="cancel") Cancel
+    a.btn(href='#{base}/#{path}', title="cancel") Cancel

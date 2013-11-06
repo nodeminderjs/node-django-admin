@@ -17,7 +17,8 @@ var UserSchema = new Schema({
   email:           { type: String, default: '' },
   hashed_password: { type: String, default: '' },
   salt:            { type: String, default: '' },
-  authToken:       { type: String, default: '' }
+  authToken:       { type: String, default: '' },
+  client:          { type: String, default: '' }
 })
 
 /**
@@ -31,7 +32,7 @@ UserSchema
     this.salt = this.makeSalt();
     this.hashed_password = this.encryptPassword(password);
   })
-  .get(function() { return this._password })
+  .get(function() { return this._password; });
 
 /**
  * Validations
@@ -49,13 +50,13 @@ UserSchema.path('email').validate(function (email) {
   return email.length;
 }, 'Email cannot be blank')
 
-UserSchema.path('email').validate(function (email, fn) {
+UserSchema.path('email').validate(function(email, fn) {
   var User = mongoose.model('User');
   
   // Check only when it is a new user or when email field is modified
   if (this.isNew || this.isModified('email')) {
-    User.find({ email: email }, function (err, users) {
-      fn(!err && users.length === 0)
+    User.find({ email: email }, function(err, users) {
+      fn(!err && users.length === 0);
     });
   } else {
     fn(true);
@@ -63,8 +64,8 @@ UserSchema.path('email').validate(function (email, fn) {
 }, 'Email already exists')
 
 UserSchema.path('hashed_password').validate(function (hashed_password) {
-  return hashed_password.length
-}, 'Password cannot be blank')
+  return hashed_password.length;
+}, 'Password cannot be blank');
 
 
 /**
@@ -90,21 +91,14 @@ UserSchema.methods = {
 
   /**
    * Authenticate - check if the passwords are the same
-   *
-   * @param {String} plainText
-   * @return {Boolean}
-   * @api public
    */
 
   authenticate: function(plainText) {
-    return this.encryptPassword(plainText) === this.hashed_password
+    return this.encryptPassword(plainText) === this.hashed_password;
   },
 
   /**
    * Make salt
-   *
-   * @return {String}
-   * @api public
    */
 
   makeSalt: function () {
@@ -113,10 +107,6 @@ UserSchema.methods = {
 
   /**
    * Encrypt password
-   *
-   * @param {String} password
-   * @return {String}
-   * @api public
    */
 
   encryptPassword: function(password) {
@@ -125,8 +115,7 @@ UserSchema.methods = {
     try {
       encrypred = crypto.createHmac('sha1', this.salt).update(password).digest('hex');
       return encrypred;
-    }
-    catch (err) {
+    } catch (err) {
       return '';
     }
   }
@@ -138,15 +127,12 @@ UserSchema.methods = {
 
 UserSchema.statics = {
 
-  /**
-   * List users
-   *
-   * @param {Object} options
-   * @param {Function} cb
-   * @api private
-   */
+  load: function(id, cb) {
+    this.findOne({ _id : id })
+      .exec(cb);
+  },
 
-  list: function (options, cb) {
+  list: function(options, cb) {
     var criteria = options.criteria || {};
     var order = options.order || {'name': 1};
 
@@ -171,13 +157,24 @@ mongoose.model('User', UserSchema);
  */
 
 admin.add({
-  singular: 'user',
-  plural: 'users',
+  path: 'users',
   model: 'User',
-  list: {
-    fields:  [ 'name', 'email'  ],
-    headers: [ 'Name', 'E-mail' ]
-  },
-  id: 'email'
+  list: [ 'name', 'email', 'client' ],
+  edit: [ 'name', 'email', 'client' ],
+  fields: {
+    'name': {
+      header: 'Name'
+    },
+    'email': {
+      header: 'Email',
+      widget: 'email'
+    },
+    'client': {
+      header: 'Client',
+      widget: 'select',
+      query:  { model: 'Client', where: {}, select: 'id' },
+      values: []
+    }
+  }
 });
 

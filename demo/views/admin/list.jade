@@ -4,7 +4,7 @@ block content
   #list
     h1= title
     #new
-      a(href="#{base}/#{model}/new") New
+      a(href="#{base}/#{path}/new") New
 
     table
       thead
@@ -13,10 +13,10 @@ block content
             th= field[f].header || capitalizeFirstLetter(f)
           th
       tbody
-        -each d in data
+        each d in data
           tr
-            - each f in list
+            each f in list
               td= d[f]
             td
-              a(href="#{base}/#{model}/#{d._id}/edit") editar
+              a(href="#{base}/#{path}/#{d._id}/edit") edit
 
