@@ -12,7 +12,7 @@
     "mongoose",
     "mongodb"
   ],
-  "version": "0.0.4",
+  "version": "0.0.5",
   "private": false,
   "engines": {
     "node": ">= 0.10.0",

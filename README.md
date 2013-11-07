@@ -7,6 +7,8 @@ It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.co
 
 Theres is a demo app in the *demo* dir. There are example config files, views and stylesheets you can use in your own project.
 
+![list view](http://4.bp.blogspot.com/-KWK259imrYo/UnvJxKEZA1I/AAAAAAAAAFI/ypctRUgXW1k/s1600/0.0.5-01.jpg)
+
 Disclaimer
 ----------
 
@@ -49,12 +51,11 @@ Example:
      */
 
     admin.add({
-      singular: 'user',
-      plural: 'users',
+      path: 'users',
       model: 'User',
       list: [ 'name', 'email', 'client' ],
       edit: [ 'name', 'email', 'client' ],
-      field: {
+      fields: {
         'name': {
           header: 'Name'
         },
@@ -63,7 +64,10 @@ Example:
           widget: 'email'
         },
         'client': {
-          header: 'Client'
+          header: 'Client',
+          widget: 'select',
+          query:  { model: 'Client', where: {}, select: 'id' },
+          values: []
         }
       }
     });
@@ -74,8 +78,10 @@ Example:
 * email
 * select
 
+![list view](http://2.bp.blogspot.com/-LTqIgVKq0Y0/UnvJx4QCNnI/AAAAAAAAAFM/vLHlgFF6Q8Q/s1600/0.0.5-02.jpg)
+
 Links
 -----
 
+* [Blog](http://nodeminderjs.blogspot.com.br/)
 * [npm registry](https://npmjs.org/package/node-django-admin)
-
