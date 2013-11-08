@@ -35,6 +35,7 @@ exports.config = function(app, mongoose_app, base) {
   app.get(path.join(base, '/:path/new'), edit);
   app.get(path.join(base, '/:path'), list);
   
+  app.post(path.join(base, '/:path/:id/delete'), del);
   app.post(path.join(base, '/:path/:id'), save);
   app.post(path.join(base, '/:path'), save);
   
@@ -84,7 +85,7 @@ function edit(req, res) {
       doc = new Model();
     }
     processEditFields(meta.edit, meta.fields, function() {
-      res.render('admin/form', {
+      res.render('admin/edit', {
         doc:   doc,
         path:  p,
         edit:  meta.edit,
@@ -117,6 +118,17 @@ function save(req, res) {
       return res.redirect(base_url + '/' + p);
     });
   }
+}
+
+function del(req, res) {
+  var id = req.params.id,
+      p = req.params.path,
+      Model = mongoose.model(info[p].model);
+  
+  Model.remove({ _id: id }, function(err) {
+    if (err) console.log(err);
+    return res.redirect(base_url + '/' + p);
+  });  
 }
 
 /**

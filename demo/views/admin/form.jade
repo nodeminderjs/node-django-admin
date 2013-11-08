@@ -5,30 +5,30 @@ block content
   - action += doc.isNew ? '' : '/' + doc._id
   - var id = doc.isNew ? '' : doc._id
 
-  form(method="post", action=action, enctype="multipart/form-data")
-    input(type="hidden", name="_csrf", value="#{csrf_token}")
-    input(type="hidden", name="_doc_id", value=id)
-
-    table
-      tbody
-        each f in edit
-          tr
-            - var type = field[f].widget || 'text'
-            - var header = field[f].header
-            td
-              label(for=f)= header
-            td
-              if type == 'select'
-                select(id=f, name=path+'['+f+']', placeholder='Enter '+header)
-                  each v in field[f].values
-                    if v == doc[f]
-                      option(value=v, selected)= v
-                    else
-                      option(value=v)= v
-              else
-                input(id=f, type=type, name=path+'['+f+']', value=doc[f], placeholder='Enter '+header)
-      
-
-    button(type='submit') Save changes
-    &nbsp;
-    a.btn(href='#{base}/#{path}', title="cancel") Cancel
+  #form
+    form(method="post", action=action, enctype="multipart/form-data")
+      input(type="hidden", name="_csrf", value="#{csrf_token}")
+      input(type="hidden", name="_doc_id", value=id)
+  
+      table
+        tbody
+          each f in edit
+            tr
+              - var type = field[f].widget || 'text'
+              - var header = field[f].header
+              td
+                label(for=f)= header
+              td
+                if type == 'select'
+                  select(id=f, name=path+'['+f+']', placeholder='Enter '+header)
+                    each v in field[f].values
+                      if v == doc[f]
+                        option(value=v, selected)= v
+                      else
+                        option(value=v)= v
+                else
+                  input(id=f, type=type, name=path+'['+f+']', value=doc[f], placeholder='Enter '+header)
+        
+      button(type='submit') Save changes
+      &nbsp;
+      a.btn(href='#{base}/#{path}', title="cancel") Cancel
