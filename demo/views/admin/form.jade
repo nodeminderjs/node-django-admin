@@ -19,10 +19,11 @@ block content
               td
                 label(for=f)= header
               td
-                if type == 'select'
+                if type == 'sel' || type == 'ref'
+                  - var sel = ((doc.isNew) ? doc[f] : doc[f][field[f].display] || doc[f])
                   select(id=f, name=path+'['+f+']', placeholder='Enter '+header)
                     each v in field[f].values
-                      if v == doc[f]
+                      if v == sel
                         option(value=v, selected)= v
                       else
                         option(value=v)= v

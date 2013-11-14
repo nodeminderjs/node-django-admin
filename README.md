@@ -7,14 +7,14 @@ It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.co
 
 Theres is a demo app in the *demo* dir. There are example config files, views and stylesheets you can use in your own project.
 
-![list view](http://4.bp.blogspot.com/-KWK259imrYo/UnvJxKEZA1I/AAAAAAAAAFI/ypctRUgXW1k/s1600/0.0.5-01.jpg)
+![list view](http://1.bp.blogspot.com/-CGtruS6Wqag/UoTQh5F6Y9I/AAAAAAAAAFk/u1MHBYxZccM/s400/1.png)
 
 Disclaimer
 ----------
 
 We are in an early development stage, so the project is not fully functional. 
 
-There is absolutely no concern about backward compatibility until version 0.1.x is reached.
+There is absolutely no concern about backward compatibility until version 0.1.0 is reached.
 
 Install
 -------
@@ -29,6 +29,8 @@ You can copy the example files to your app and modify then:
 Copy the folder *demo/views/admin* to *your_app_views_dir/admin*.
 
 Copy the folder *demo/public/admin* to *your_public_dir/admin*.
+
+Example models are in the *demo/models* dir.
 
 How to use
 ----------
@@ -53,8 +55,8 @@ Example:
     admin.add({
       path: 'users',
       model: 'User',
-      list: [ 'name', 'email', 'client' ],
-      edit: [ 'name', 'email', 'client' ],
+      list: [ 'name', 'email', '_client', 'role' ],
+      edit: [ 'name', 'email', '_client', 'role' ],
       fields: {
         'name': {
           header: 'Name'
@@ -63,22 +65,28 @@ Example:
           header: 'Email',
           widget: 'email'
         },
-        'client': {
-          header: 'Client',
-          widget: 'select',
-          query:  { model: 'Client', where: {}, select: 'id' },
-          values: []
+        '_client': {
+          header:  'Client',
+          widget:  'ref',
+          model:   'Client',
+          display: 'name'
+        },
+        'role': {
+          header: 'Role',
+          widget: 'sel',
+          values: ['admin', 'client', 'staff'] 
         }
       }
     });
 
-### widget
+### Widgets
 
 * text (default)
 * email
-* select
+* ref
+* sel
 
-![list view](http://2.bp.blogspot.com/-LTqIgVKq0Y0/UnvJx4QCNnI/AAAAAAAAAFM/vLHlgFF6Q8Q/s1600/0.0.5-02.jpg)
+![edit view](http://4.bp.blogspot.com/-7kB6qmYNYIk/UoTQhpZzw8I/AAAAAAAAAFg/7d7pygRKt-U/s400/2.png)
 
 Links
 -----

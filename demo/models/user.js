@@ -18,7 +18,8 @@ var UserSchema = new Schema({
   hashed_password: { type: String, default: '' },
   salt:            { type: String, default: '' },
   authToken:       { type: String, default: '' },
-  client:          { type: String, default: '' }
+  _client:         { type: Schema.Types.ObjectId, ref: 'Client' },
+  role:            { type: String, default: 'client'}
 })
 
 /**
@@ -63,10 +64,22 @@ UserSchema.path('email').validate(function(email, fn) {
   }
 }, 'Email already exists')
 
-UserSchema.path('hashed_password').validate(function (hashed_password) {
+UserSchema.path('hashed_password').validate(function(hashed_password) {
   return hashed_password.length;
 }, 'Password cannot be blank');
 
+UserSchema.path('_client').validate(function(client) {
+  var Client = mongoose.model('Client');
+
+  // Check only when it is a new user or when client field is modified
+  if (this.isNew || this.isModified('_client')) {
+    Client.findOne({ _id: client }, function(err, cli) {
+      return err;
+    });
+  } else {
+    return true;
+  }
+}, 'Invalid client');
 
 /**
  * Pre-save hook
@@ -129,6 +142,7 @@ UserSchema.statics = {
 
   load: function(id, cb) {
     this.findOne({ _id : id })
+      .populate('_client')
       .exec(cb);
   },
 
@@ -137,7 +151,7 @@ UserSchema.statics = {
     var order = options.order || {'name': 1};
 
     this.find(criteria)
-      //.populate('user', 'name username')
+      .populate('_client', 'name id')
       .sort(order)
       .limit(options.perPage)
       .skip(options.perPage * options.page)
@@ -159,8 +173,8 @@ mongoose.model('User', UserSchema);
 admin.add({
   path: 'users',
   model: 'User',
-  list: [ 'name', 'email', 'client' ],
-  edit: [ 'name', 'email', 'client' ],
+  list: [ 'name', 'email', '_client', 'role' ],
+  edit: [ 'name', 'email', '_client', 'role' ],
   fields: {
     'name': {
       header: 'Name'
@@ -169,11 +183,16 @@ admin.add({
       header: 'Email',
       widget: 'email'
     },
-    'client': {
-      header: 'Client',
-      widget: 'select',
-      query:  { model: 'Client', where: {}, select: 'id' },
-      values: []
+    '_client': {
+      header:  'Client',
+      widget:  'ref',
+      model:   'Client',
+      display: 'name'
+    },
+    'role': {
+      header: 'Role',
+      widget: 'sel',
+      values: ['admin', 'client', 'staff'] 
     }
   }
 });
