@@ -85,6 +85,7 @@ function edit(req, res) {
     }
     processEditFields(meta, doc, function() {
       res.render('admin/edit', {
+        meta:  meta,
         doc:   doc,
         path:  p,
         edit:  meta.edit,
@@ -199,7 +200,7 @@ function processFormFields(meta, body, cb) {
     query[field.display] = body[fields[f]];
     Model.findOne(query, function(err, ref) {
       if (err) console.log(err);
-      body[fields[f]] = ref['_id'];
+      body[field.field] = ref['_id'];
       count--;
       if (count == 0) {
         return cb();

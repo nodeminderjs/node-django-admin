@@ -10,9 +10,10 @@
     "django",
     "express",
     "mongoose",
-    "mongodb"
+    "mongodb",
+    "bootstrap"
   ],
-  "version": "0.0.7",
+  "version": "0.0.8",
   "private": false,
   "engines": {
     "node": ">= 0.10.0",

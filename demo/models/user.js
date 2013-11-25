@@ -14,13 +14,13 @@ var mongoose = require('mongoose'),
 
 var UserSchema = new Schema({
   name:            { type: String, default: '' },
-  email:           { type: String, default: '' },
+  email:           { type: String, default: '', lowercase: true, unique: true },
   hashed_password: { type: String, default: '' },
   salt:            { type: String, default: '' },
   authToken:       { type: String, default: '' },
   _client:         { type: Schema.Types.ObjectId, ref: 'Client' },
   role:            { type: String, default: 'client'}
-})
+});
 
 /**
  * Virtuals
@@ -34,6 +34,10 @@ UserSchema
     this.hashed_password = this.encryptPassword(password);
   })
   .get(function() { return this._password; });
+
+UserSchema
+  .virtual('client')
+  .get(function() { return ( (typeof(this._client) === 'object') ? this._client.name : this._client ); });
 
 /**
  * Validations
@@ -145,7 +149,7 @@ UserSchema.statics = {
       .populate('_client')
       .exec(cb);
   },
-
+  
   list: function(options, cb) {
     var criteria = options.criteria || {};
     var order = options.order || {'name': 1};
@@ -173,8 +177,8 @@ mongoose.model('User', UserSchema);
 admin.add({
   path: 'users',
   model: 'User',
-  list: [ 'name', 'email', '_client', 'role' ],
-  edit: [ 'name', 'email', '_client', 'role' ],
+  list: [ 'name', 'email', 'client', 'role' ],
+  edit: [ 'name', 'email', 'client', 'role' ],
   fields: {
     'name': {
       header: 'Name'
@@ -183,11 +187,12 @@ admin.add({
       header: 'Email',
       widget: 'email'
     },
-    '_client': {
-      header:  'Client',
+    'client': {
+      header: 'Client',
       widget:  'ref',
       model:   'Client',
-      display: 'name'
+      display: 'name',
+      field:   '_client'
     },
     'role': {
       header: 'Role',
@@ -196,4 +201,3 @@ admin.add({
     }
   }
 });
-

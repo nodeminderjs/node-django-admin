@@ -39,6 +39,10 @@ app.use(express.cookieParser());
 app.use(express.bodyParser());
 app.use(express.methodOverride());
 app.use(express.session({ secret: 'SECRET' }));
+app.configure('development', function(){
+  app.use(express.errorHandler());
+  app.locals.pretty = true;
+});
 
 // Bootstrap admin site
 admin.config(app, mongoose, '/admin');

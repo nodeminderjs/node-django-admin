@@ -5,9 +5,10 @@ A Node.js admin site tool inspired by the Django framework admin site tool.
 
 It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.com/).
 
-Theres is a demo app in the *demo* dir. There are example config files, views and stylesheets you can use in your own project.
+Theres is a demo app in the *demo* dir. There are example config files, models, views and stylesheets you can use in your own project.
 
 ![list view](http://1.bp.blogspot.com/-CGtruS6Wqag/UoTQh5F6Y9I/AAAAAAAAAFk/u1MHBYxZccM/s400/1.png)
+
 
 Disclaimer
 ----------
@@ -16,13 +17,17 @@ We are in an early development stage, so the project is not fully functional.
 
 There is absolutely no concern about backward compatibility until version 0.1.0 is reached.
 
+
 Install
 -------
 
     $ npm install node-django-admin
 
-Views and stylesheets
----------------------
+
+Models, views and stylesheets
+-----------------------------
+
+We use [Twitter Bootstrap](http://getbootstrap.com/) in the demo app, but it's not required.
 
 You can copy the example files to your app and modify then:
 
@@ -31,6 +36,12 @@ Copy the folder *demo/views/admin* to *your_app_views_dir/admin*.
 Copy the folder *demo/public/admin* to *your_public_dir/admin*.
 
 Example models are in the *demo/models* dir.
+
+The models must have the following requirements:
+
+* Define a virtual field for each ref field.
+* Define the static methods *load* and *list*. See the examples for more information.
+
 
 How to use
 ----------
@@ -55,8 +66,8 @@ Example:
     admin.add({
       path: 'users',
       model: 'User',
-      list: [ 'name', 'email', '_client', 'role' ],
-      edit: [ 'name', 'email', '_client', 'role' ],
+      list: [ 'name', 'email', 'client', 'role' ],
+      edit: [ 'name', 'email', 'client', 'role' ],
       fields: {
         'name': {
           header: 'Name'
@@ -65,11 +76,12 @@ Example:
           header: 'Email',
           widget: 'email'
         },
-        '_client': {
-          header:  'Client',
+        'client': {
+          header: 'Client',
           widget:  'ref',
           model:   'Client',
-          display: 'name'
+          display: 'name',
+          field:   '_client'
         },
         'role': {
           header: 'Role',

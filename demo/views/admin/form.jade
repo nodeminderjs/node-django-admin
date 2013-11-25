@@ -4,6 +4,8 @@ block content
   - var action = base + '/' + path
   - action += doc.isNew ? '' : '/' + doc._id
   - var id = doc.isNew ? '' : doc._id
+  
+  h2= ( (id) ? "Edit " : "New " ) + ( (meta.name) ? meta.name : meta.model )
 
   #form
     form(method="post", action=action, enctype="multipart/form-data")

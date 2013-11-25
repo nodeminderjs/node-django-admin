@@ -38,9 +38,10 @@ schema.path('id').validate(function(codigo) {
  */
 
 schema.statics = {
+
   load: function(id, cb) {
     this.findOne({ _id : id })
-      .exec(cb)
+      .exec(cb);
   },
 
   list: function (options, cb) {
@@ -48,12 +49,12 @@ schema.statics = {
     var order = options.order || {'name': 1};
 
     this.find(criteria)
-      //.populate('user', 'name username')
       .sort(order)
       .limit(options.perPage)
       .skip(options.perPage * options.page)
       .exec(cb);
   }
+  
 }
 
 /**

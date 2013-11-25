@@ -2,9 +2,9 @@ extends layouts/default
 
 block content
   #list
-    h1= title
+    h2= title
     #new
-      a(href="#{base}/#{path}/new") New
+      a.btn.btn-default(href="#{base}/#{path}/new", role="button") New &raquo;
 
     table
       thead
@@ -16,10 +16,7 @@ block content
         each d in data
           tr
             each f in list
-              if fields[f].display
-                td= d[f][fields[f].display]
-              else
-                td= d[f]
+              td= d[f]
             td
               a(href="#{base}/#{path}/#{d._id}/edit") edit
 
