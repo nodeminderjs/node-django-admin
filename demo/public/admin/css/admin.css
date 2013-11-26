@@ -1,7 +1,7 @@
 body {
   padding-top: 50px;
 	margin: 0;
-  color: #666;
+  color: rgb(34,34,34);
 }
 
 .jumbotron {
@@ -21,34 +21,57 @@ a { font-weight: bold; text-decoration: none; }
 /* a:focus   { color: #a77; }  /* click */
 /* a:active  { color: #a77; }  /* links ativos - tab */
 
-#list {
+#list-top {
   position: relative;
 }
 
 #new {
   position: absolute;
   right: 0;
-  top: 0;
-  margin: .5em 0 0 0;
+  bottom: 0;
 }
 
+#form-btn {
+  position: relative;
+}
+
+#del-btn {
+  position: absolute;
+  right: 0;
+  bottom: 0;
+}
+
+/* Override bootstrap css rules */
+
 table {
-  width: 100%;
+	border-bottom: 4px solid rgb(34,34,34);
 }
 
 th {
   color: #fff;
-  background-color: #999;
-  padding: 3px 6px;
+  background-color: rgb(34,34,34);
+  /* padding: 3px 6px; */
+  border-bottom: none !important;
 }
 
-td {
-  padding: 3px 6px;
+a.list-group-item.active, a.list-group-item.active:hover, a.list-group-item.active:focus {
+  color: #fff;
+  background-color: rgb(34,34,34);
+  border-color: rgb(34,34,34);
+  background-image: none;
 }
 
-#form {
+.form-horizontal .control-label {
+  /* text-align: left; */
+  color: #fff;
+  background-color: rgb(34,34,34);
+  height: 34px;
+  border-radius: 4px;
+  border: 1px solid rgb(34,34,34);
+  /* width: 14%; */
+  /* margin-left: 15px; */
 }
 
-#del-btn {
-	text-align: right;
+.form-horizontal .form-group {
+  margin-left: 0;	
 }

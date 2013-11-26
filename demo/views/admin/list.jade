@@ -2,11 +2,13 @@ extends layouts/default
 
 block content
   #list
-    h2= title
-    #new
-      a.btn.btn-default(href="#{base}/#{path}/new", role="button") New &raquo;
+    #list-top
+      h2= title
+      #new
+        a.btn.btn-xs.btn-default(href="#{base}/#{path}/new", role="button") New &raquo;
 
-    table
+    //- .table-bordered
+    table.table.table-striped.table-hover.table-condensed
       thead
         tr
           each f in list
@@ -18,5 +20,5 @@ block content
             each f in list
               td= d[f]
             td
-              a(href="#{base}/#{path}/#{d._id}/edit") edit
+              a.btn.btn-xs.btn-default(href="#{base}/#{path}/#{d._id}/edit") edit
 

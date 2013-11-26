@@ -6,9 +6,9 @@ A Node.js admin site tool inspired by the Django framework admin site tool.
 It requires [express](http://expressjs.com/) and [mongoose](http://mongoosejs.com/).
 
 Theres is a demo app in the *demo* dir. There are example config files, models, views and stylesheets you can use in your own project.
-We are using [Twitter Bootstrap](http://getbootstrap.com/) in the demo app, but it's not required.
+We are using [Bootstrap](http://getbootstrap.com/) in the demo app, but it's not required.
 
-![list view](http://4.bp.blogspot.com/-TTszJFyDyS8/UpOiS8TpN7I/AAAAAAAAAF8/RGupqd3W0HM/s1600/1.png)
+![list view](http://1.bp.blogspot.com/-y4VukFR63as/UpTzpdq1mQI/AAAAAAAAAGU/TTH2vpkz8dk/s1600/1.png)
 
 
 Disclaimer
@@ -97,7 +97,7 @@ Example:
 * ref
 * sel
 
-![edit view](http://2.bp.blogspot.com/-VLFBbO0FQGs/UpOiSwxNyNI/AAAAAAAAAGA/Igt0MCovsyU/s1600/2.png)
+![edit view](http://3.bp.blogspot.com/-iAvMiqBiOPw/UpTzpdJygFI/AAAAAAAAAGY/KaOT2TfdpVE/s1600/2.png)
 
 
 Links

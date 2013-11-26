@@ -16,10 +16,14 @@ html
           ul(class="nav navbar-nav")
             li.active
               a(href="#{base}") Home
-            li
-              a(href="/about") About
-            li
-              a(href="/contact") Contact
+            li.dropdown
+              a.dropdown-toggle(href="#" data-toggle="dropdown")= "Models "
+                b.caret              
+              ul.dropdown-menu
+                each item in menu
+                  - var cls = item == path ? "active" : ""
+                  li(class=cls)
+                    a(role="menuitem", tabindex="-1", href="#{base}/#{item}")= capitalizeFirstLetter(item)
 
     // Main jumbotron for a primary marketing message or call to action
     .jumbotron
@@ -33,14 +37,21 @@ html
       .row
         .col-md-2
           h2 Models
-          #menu
-            block menu
-              ul
-                each item in menu
-                  li
-                    a(href="#{base}/#{item}")= capitalizeFirstLetter(item)
-          p
-           a.btn.btn-default(href="#", role="button") View details &raquo;
+
+          //- .dropdown.theme-dropdown.open.clearfix
+          //-   ul.dropdown-menu(role="menu", style="position:static;")
+          //-     each item in menu
+          //-       - var cls = item == path ? "active" : ""
+          //-       li(class=cls)
+          //-         a(role="menuitem", tabindex="-1", href="#{base}/#{item}")= capitalizeFirstLetter(item)
+
+          .list-group
+            each item in menu
+              - var cls = item == path ? "list-group-item active" : "list-group-item"
+              a(class=cls, href="#{base}/#{item}")= capitalizeFirstLetter(item)
+          
+          //- p
+          //-   a.btn.btn-default(href="#", role="button") View details &raquo;
 
         .col-md-10
           block content

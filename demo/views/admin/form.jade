@@ -8,30 +8,37 @@ block content
   h2= ( (id) ? "Edit " : "New " ) + ( (meta.name) ? meta.name : meta.model )
 
   #form
-    form(method="post", action=action, enctype="multipart/form-data")
+    form.form-horizontal(method="post", action=action, enctype="multipart/form-data", role="form")
       input(type="hidden", name="_csrf", value="#{csrf_token}")
       input(type="hidden", name="_doc_id", value=id)
   
-      table
-        tbody
-          each f in edit
-            tr
-              - var type = field[f].widget || 'text'
-              - var header = field[f].header
-              td
-                label(for=f)= header
-              td
-                if type == 'sel' || type == 'ref'
-                  - var sel = ((doc.isNew) ? doc[f] : doc[f][field[f].display] || doc[f])
-                  select(id=f, name=path+'['+f+']', placeholder='Enter '+header)
-                    each v in field[f].values
-                      if v == sel
-                        option(value=v, selected)= v
-                      else
-                        option(value=v)= v
-                else
-                  input(id=f, type=type, name=path+'['+f+']', value=doc[f], placeholder='Enter '+header)
+      each f in edit
+        .form-group
+          - var type = field[f].widget || 'text'
+          - var header = field[f].header
+          label.col-sm-2.control-label(for=f)= header + ':'
+          .col-sm-10
+            if type == 'sel' || type == 'ref'
+              - var sel = ((doc.isNew) ? doc[f] : doc[f][field[f].display] || doc[f])
+              select.form-control(id=f, name=path+'['+f+']', placeholder='Enter '+header)
+                each v in field[f].values
+                  if v == sel
+                    option(value=v, selected)= v
+                  else
+                    option(value=v)= v
+            else
+              input.form-control(id=f, type=type, name=path+'['+f+']', value=doc[f], placeholder='Enter '+header)
         
-      button(type='submit') Save changes
-      &nbsp;
-      a.btn(href='#{base}/#{path}', title="cancel") Cancel
+      .form-group 
+        .col-sm-2
+        .col-sm-10
+          #form-btn
+            button.btn.btn-primary(type='submit') Save changes
+            &nbsp;
+            a.btn(href='#{base}/#{path}', title="cancel") Cancel
+  
+            if !doc.isNew
+              #del-btn
+                form(action=action+'/delete' method="post")
+                  button.btn.btn-danger(type='submit') Delete
+          
